@@ -1,0 +1,84 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<div class="row justify-content-center mt-5">
+    <div class="col-md-5">
+        <div class="card text-center" style="border-radius: 16px; overflow: hidden;">
+
+            <!-- Header -->
+            <div class="py-4"
+                 style="background: #fff5f5; border-bottom: 2px solid #f0e0e0;">
+                <div style="font-size: 3rem;">✅</div>
+                <h4 class="fw-bold mb-0 mt-2" style="color: #7b0000;">Request Sent!</h4>
+                <p class="small mb-0 text-muted">
+                    Your blood request was submitted successfully
+                </p>
+            </div>
+
+            <div class="card-body p-4">
+
+                <!-- Token Box -->
+                {% if token %}
+                <div class="p-3 mb-4 rounded-3 text-center"
+                     style="background: #fff5f5; border: 2px dashed #7b0000;">
+                    <p class="text-muted small mb-1">Your Request Token</p>
+                    <h3 class="fw-bold mb-1" style="color: #7b0000; letter-spacing: 3px;">
+                        {{ token }}
+                    </h3>
+                    <p class="text-muted mb-0" style="font-size: 11px;">
+                        ⚠️ Save this token — you need it to check your request status
+                    </p>
+                </div>
+                {% endif %}
+
+                <!-- What happens next -->
+                <div class="text-start mb-4">
+                    <p class="fw-semibold text-muted mb-3" style="font-size: 13px;">
+                        What happens next?
+                    </p>
+                    <div class="d-flex gap-3 mb-2 align-items-start">
+                        <span class="fw-bold" style="color: #7b0000; font-size: 13px;">1.</span>
+                        <p class="small text-muted mb-0">Donor reviews and accepts or rejects your request</p>
+                    </div>
+                    <div class="d-flex gap-3 mb-2 align-items-start">
+                        <span class="fw-bold" style="color: #7b0000; font-size: 13px;">2.</span>
+                        <p class="small text-muted mb-0">Go to <strong>Check Status</strong> and enter your token to see the result</p>
+                    </div>
+                    <div class="d-flex gap-3 align-items-start">
+                        <span class="fw-bold" style="color: #7b0000; font-size: 13px;">3.</span>
+                        <p class="small text-muted mb-0">If accepted, donor's phone number is revealed — you can call them directly</p>
+                    </div>
+                </div>
+
+                <!-- Buttons -->
+                <div class="d-flex flex-column align-items-center gap-2">
+                    <a href="/check-status/" class="btn fw-bold px-5 py-2"
+                       style="background: #7b0000; color: white; border-radius: 10px;">
+                        📋 Check Request Status
+                    </a>
+                    <a href="/search/" class="btn fw-semibold px-5 py-2"
+                    style="border: 1.5px solid #7b0000; color: #7b0000; border-radius: 10px;">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16"
+                            fill="#7b0000" viewBox="0 0 24 24"
+                            style="margin-right: 6px; vertical-align: middle;">
+                            <path d="M15.5 14h-.79l-.28-.27A6.471 6.471 0 0 0 16 9.5 6.5 6.5 0 1 0 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/>
+                        </svg>
+                        Search Again
+                    </a>
+                    <a href="/" class="btn fw-semibold px-5 py-2"
+                       style="background: #f5f5f5; color: #444; border-radius: 10px;">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"
+                            fill="#444" style="margin-right: 6px; vertical-align: middle;">
+                            <path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/>
+                        </svg>
+                        Go Home
+                    </a>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}

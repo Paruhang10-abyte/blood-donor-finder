@@ -2,77 +2,185 @@
 
 {% block content %}
 
-<div class="row justify-content-center mt-4">
-    <div class="col-md-6">
-        <div class="card shadow">
+<div class="row justify-content-center mt-4 align-items-center">
+
+    <!-- Left side - motivational -->
+    <div class="col-md-4 d-none d-md-block pe-5">
+        <div style="font-size: 3rem;">💉</div>
+        <h2 class="fw-bold mt-2 mb-3" style="color: #7b0000; line-height: 1.3; font-size: 2rem;">
+            Join us &<br>save a life!
+        </h2>
+        <p class="text-muted mb-4">Register as a donor and help connect patients with compatible blood donors across Nepal.</p>
+
+        <div class="d-flex flex-column gap-2">
+            <div class="d-flex align-items-center gap-2">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24"
+                    fill="none" stroke="white" stroke-width="2.5"
+                    stroke-linecap="round" stroke-linejoin="round"
+                    style="background: #2e7d32; border-radius: 6px; padding: 3px; flex-shrink: 0;">
+                    <polyline points="20 6 9 17 4 12"/>
+                </svg>
+                <span class="text-muted small">Free to register</span>
+            </div>
+            <div class="d-flex align-items-center gap-2">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24"
+                    fill="none" stroke="white" stroke-width="2.5"
+                    stroke-linecap="round" stroke-linejoin="round"
+                    style="background: #2e7d32; border-radius: 6px; padding: 3px; flex-shrink: 0;">
+                    <polyline points="20 6 9 17 4 12"/>
+                </svg>
+                <span class="text-muted small">Help patients near you</span>
+            </div>
+           <div class="d-flex align-items-center gap-2">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24"
+                    fill="none" stroke="white" stroke-width="2.5"
+                    stroke-linecap="round" stroke-linejoin="round"
+                    style="background: #2e7d32; border-radius: 6px; padding: 3px; flex-shrink: 0;">
+                    <polyline points="20 6 9 17 4 12"/>
+                </svg>
+                <span class="text-muted small">Toggle availability anytime</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Right side - register form -->
+    <div class="col-md-5">
+        <div class="card" style="border-radius: 16px; overflow: hidden;
+                                  box-shadow: 0 8px 32px rgba(123,0,0,0.1);">
+
+            <!-- Card Header -->
+            <div class="text-center py-4"
+                 style="background: #fff8f8; border-bottom: 2px solid #f0e0e0;">
+                <div style="font-size: 2.2rem;">💉</div>
+                <h5 class="fw-bold mb-0 mt-2" style="color: #7b0000;">Become a Donor</h5>
+                <p class="small mb-0 text-muted">Register to save lives across Nepal</p>
+            </div>
+
             <div class="card-body p-4">
-
-                <h3 class="text-center text-danger fw-bold mb-4">
-                    💉 Become a Donor
-                </h3>
-
                 {% if error %}
-                <div class="alert alert-danger">{{ error }}</div>
+                <div class="alert alert-danger rounded-3 small py-2">{{ error }}</div>
                 {% endif %}
 
                 <form method="POST" action="/register/">
                     {% csrf_token %}
 
-                    <div class="mb-3">
-                        <label class="form-label fw-bold">Full Name</label>
-                        <input type="text" name="name" class="form-control" required>
+                    <!-- Floating label - Name -->
+                    <div class="form-floating mb-3">
+                        <input type="text" name="name" class="form-control"
+                               id="nameInput" value="{{ name }}"
+                               placeholder="Your full name" required
+                               style="border: 1.5px solid #ddd; border-radius: 10px;">
+                        <label for="nameInput" class="text-muted small">Full Name</label>
                     </div>
 
-                    <div class="mb-3">
-                        <label class="form-label fw-bold">Email Address</label>
-                        <input type="email" name="email" class="form-control" required>
+                    <!-- Floating label - Email -->
+                    <div class="form-floating mb-3">
+                        <input type="email" name="email" class="form-control"
+                               id="emailInput" value="{{ email }}"
+                               placeholder="your@email.com" required
+                               style="border: 1.5px solid #ddd; border-radius: 10px;">
+                        <label for="emailInput" class="text-muted small">Email Address</label>
                     </div>
 
-                    <div class="mb-3">
-                        <label class="form-label fw-bold">Password</label>
-                        <input type="password" name="password" class="form-control" required>
+                    <!-- Floating label - Password -->
+                    <div class="form-floating mb-3">
+                        <input type="password" name="password" class="form-control"
+                               id="passwordInput"
+                               placeholder="••••••••" required
+                               style="border: 1.5px solid #ddd; border-radius: 10px;">
+                        <label for="passwordInput" class="text-muted small">Password</label>
                     </div>
 
-                    <div class="mb-3">
-                        <label class="form-label fw-bold">Blood Group</label>
-                        <select name="blood_group" class="form-select" required>
-                            <option value="">Select Blood Group</option>
-                            <option value="A+">A+</option>
-                            <option value="A-">A-</option>
-                            <option value="B+">B+</option>
-                            <option value="B-">B-</option>
-                            <option value="O+">O+</option>
-                            <option value="O-">O-</option>
-                            <option value="AB+">AB+</option>
-                            <option value="AB-">AB-</option>
-                        </select>
+                    <!-- Blood Group + Phone side by side -->
+                    <div class="row">
+                        <div class="col-6 mb-3">
+                            <label class="form-label fw-semibold small"
+                                   style="color: #444;">Blood Group</label>
+                            <select name="blood_group" class="form-select" required
+                                    style="border: 1.5px solid #ddd; border-radius: 10px;
+                                           color: #7b0000; font-weight: 600;">
+                                <option value="">Select</option>
+                                <option value="A+"  {% if blood_group == 'A+'  %}selected{% endif %}>A+</option>
+                                <option value="A-"  {% if blood_group == 'A-'  %}selected{% endif %}>A-</option>
+                                <option value="B+"  {% if blood_group == 'B+'  %}selected{% endif %}>B+</option>
+                                <option value="B-"  {% if blood_group == 'B-'  %}selected{% endif %}>B-</option>
+                                <option value="O+"  {% if blood_group == 'O+'  %}selected{% endif %}>O+</option>
+                                <option value="O-"  {% if blood_group == 'O-'  %}selected{% endif %}>O-</option>
+                                <option value="AB+" {% if blood_group == 'AB+' %}selected{% endif %}>AB+</option>
+                                <option value="AB-" {% if blood_group == 'AB-' %}selected{% endif %}>AB-</option>
+                            </select>
+                        </div>
+
+                        <div class="col-6 mb-3">
+                            <label class="form-label fw-semibold small"
+                                   style="color: #444;">Phone Number</label>
+                            <input type="tel" name="phone" class="form-control"
+                                   id="phoneInput"
+                                   pattern="9[0-9]{9}"
+                                   maxlength="10"
+                                   value="{{ phone }}"
+                                   placeholder="98XXXXXXXX" required
+                                   style="border: 1.5px solid #ddd; border-radius: 10px;"
+                                   oninput="validatePhone(this)"
+                                   onblur="validatePhone(this)">
+                            <div id="phoneError" class="small mt-1"
+                                 style="display:none; color: #c0392b; font-size: 11px;">
+                                Please enter a valid phone number.
+                            </div>
+                        </div>
                     </div>
 
-                    <div class="mb-3">
-                        <label class="form-label fw-bold">District</label>
-                        <input type="text" name="district" class="form-control" required>
+                    <!-- District -->
+                    <div class="form-floating mb-3">
+                        <input type="text" name="district" class="form-control"
+                               id="districtInput" value="{{ district }}"
+                               list="district-list"
+                               placeholder="Type your district..."
+                               autocomplete="off" required
+                               style="border: 1.5px solid #ddd; border-radius: 10px;">
+                        <label for="districtInput" class="text-muted small">District</label>
+                        <datalist id="district-list">
+                        {% for d in districts %}
+                            <option value="{{ d|title }}">
+                        {% endfor %}
+                        </datalist>
                     </div>
 
-                    <div class="mb-3">
-                        <label class="form-label fw-bold">Phone Number</label>
-                        <input type="text" name="phone" class="form-control" required>
-                    </div>
-
-                    <div class="d-grid mt-4">
-                        <button type="submit" class="btn btn-danger fw-bold">
+                    <div class="d-grid mt-3">
+                        <button type="submit" class="btn fw-bold py-2"
+                                style="background: #7b0000; color: white;
+                                       border-radius: 10px; font-size: 15px;">
                             Register as Donor →
                         </button>
                     </div>
                 </form>
 
-                <p class="text-center mt-3 text-muted">
+                <p class="text-center mt-3 text-muted small">
                     Already have an account?
-                    <a href="/login/" class="text-danger fw-bold">Login here</a>
+                    <a href="/login/" style="color: #7b0000;" class="fw-bold">Login here</a>
                 </p>
-
             </div>
         </div>
     </div>
 </div>
+
+<script>
+function validatePhone(input) {
+    const error = document.getElementById('phoneError');
+
+    // remove non-digits as they type
+    input.value = input.value.replace(/\D/g, '');
+
+    const valid = /^9[0-9]{9}$/.test(input.value);
+
+    if (!valid && input.value.length > 0 && document.activeElement !== input) {
+        error.style.display = 'block';
+        input.style.borderColor = '#c0392b';
+    } else {
+        error.style.display = 'none';
+        input.style.borderColor = valid ? '#ddd' : '#ddd';
+    }
+}
+</script>
 
 {% endblock %}

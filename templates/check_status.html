@@ -1,0 +1,159 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<div class="row justify-content-center mt-4">
+    <div class="col-md-5">
+        <div class="card" style="border-radius: 16px; overflow: hidden;">
+
+            <!-- Header -->
+            <div class="text-center py-4"
+                 style="background: #fff5f5; border-bottom: 2px solid #f0e0e0;">
+                <div style="font-size: 2rem;">📋</div>
+                <h4 class="fw-bold mb-0 mt-2" style="color: #7b0000;">Check Request Status</h4>
+                <p class="small mb-0 text-muted">
+                    Enter your request token to track your request
+                </p>
+            </div>
+
+            <div class="card-body p-4">
+
+                {% if error %}
+                <div class="alert alert-danger rounded-3 small py-2">{{ error }}</div>
+                {% endif %}
+
+                <form method="POST">
+                    {% csrf_token %}
+                    <div class="form-floating mb-3">
+                        <input type="text" name="token"
+                               class="form-control"
+                               id="tokenInput"
+                               placeholder="e.g. BLD-482910"
+                               value="{{ token|default:'' }}"
+                               required
+                               style="border: 1.5px solid #ddd; border-radius: 10px;
+                                      letter-spacing: 2px; font-weight: 600;">
+                        <label for="tokenInput" class="text-muted small">
+                            Request Token (e.g. BLD-482910)
+                        </label>
+                    </div>
+
+                    <div class="d-grid">
+                        <button type="submit" class="btn fw-bold py-2"
+                                style="background: #7b0000; color: white;
+                                       border-radius: 10px; font-size: 15px;">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16"
+                                 fill="white" viewBox="0 0 24 24"
+                                 style="margin-right: 6px; vertical-align: middle;">
+                                <path d="M15.5 14h-.79l-.28-.27A6.471 6.471 0 0 0 16 9.5 6.5 6.5 0 1 0 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/>
+                            </svg>
+                            Check Status
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Result -->
+{% if result %}
+<div class="row justify-content-center mt-4">
+    <div class="col-md-7">
+        <div class="card" style="border-radius: 14px; border-left: 4px solid
+            {% if result.status == 'Accepted' %}#2e7d32
+            {% elif result.status == 'Rejected' %}#c62828
+            {% else %}#f57f17{% endif %};">
+            <div class="card-body p-4">
+                <div class="row align-items-center">
+
+                    <!-- Request Details -->
+                    <div class="col-md-8">
+                        <div class="d-flex align-items-center gap-2 mb-2">
+                            <span class="badge px-3 py-2"
+                                  style="background: #7b0000; font-size: 13px;">
+                                {{ result.blood_group_needed }}
+                            </span>
+                            <span class="text-muted small">
+                                {{ result.created_at|date:"d M Y" }}
+                            </span>
+                        </div>
+
+                        <p class="mb-1 small">
+                            <span class="text-muted">Patient:</span>
+                            <strong>{{ result.patient_name }}</strong>
+                        </p>
+                        <p class="mb-1 small">
+                            <span class="text-muted">District:</span>
+                            {{ result.district }}
+                        </p>
+                        <p class="mb-1 small">
+                            <span class="text-muted">Donor:</span>
+                            {{ result.donor.user.get_full_name }}
+                            ({{ result.donor.blood_group }})
+                        </p>
+                        <p class="mb-0 small">
+                            <span class="text-muted">Donor Phone:</span>
+                            {% if result.status == 'Accepted' %}
+                                <strong style="color: #2e7d32;">
+                                    {{ result.donor.phone }}
+                                </strong>
+                            {% else %}
+                                <span class="text-muted">
+                                    Shown after acceptance
+                                </span>
+                            {% endif %}
+                        </p>
+                    </div>
+
+                    <!-- Status + Cancel -->
+                    <div class="col-md-4 text-center">
+                        {% if result.status == 'Pending' %}
+                            <span class="badge bg-warning text-dark px-3 py-2 mb-1">
+                                ⏳ Pending
+                            </span>
+                            <p class="text-muted mt-1 mb-2" style="font-size: 11px;">
+                                Waiting for donor
+                            </p>
+                            <form method="POST" action="/cancel-request/{{ result.id }}/">
+                                {% csrf_token %}
+                                <input type="hidden" name="token" value="{{ token }}">
+                                <button type="submit" class="btn btn-sm fw-semibold w-100"
+                                        style="background: #fff5f5; color: #7b0000;
+                                               border: 1px solid #ffcccc; border-radius: 8px;"
+                                        onclick="return confirm('Cancel this request?')">
+                                    ✖ Cancel Request
+                                </button>
+                            </form>
+                        {% elif result.status == 'Accepted' %}
+                            <span class="badge bg-success px-3 py-2 mb-1">
+                                ✅ Accepted
+                            </span>
+                            <p class="text-muted mt-1 mb-0" style="font-size: 11px;">
+                                Call the donor now!
+                            </p>
+                        {% else %}
+                            <span class="badge bg-danger px-3 py-2 mb-1">
+                                ❌ Rejected
+                            </span>
+                            <p class="text-muted mt-1 mb-0" style="font-size: 11px;">
+                                Try another donor
+                            </p>
+                        {% endif %}
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endif %}
+
+<div class="text-center mt-3">
+    <a href="/search/" class="btn btn-sm fw-semibold"
+       style="border: 1px solid #7b0000; color: #7b0000; border-radius: 8px;">
+        ← Back to Search
+    </a>
+</div>
+
+{% endblock %}

@@ -3,20 +3,29 @@
 {% block content %}
 
 <div class="row justify-content-center mt-4">
-    <div class="col-md-6">
-        <div class="card shadow">
-            <div class="card-body p-4">
+    <div class="col-md-5">
+        <div class="card shadow-lg" style="border-radius: 16px; overflow: hidden;">
 
-                <h3 class="text-center text-danger fw-bold mb-4">
-                    🔍 Find Blood Donor
-                </h3>
+            <!-- Header -->
+            <div class="text-center py-4 px-3"
+                 style="background: #fff5f5; border-bottom: 2px solid #f0e0e0;">
+                <div style="font-size: 2rem;">🩸</div>
+                <h4 class="fw-bold mb-1 mt-2" style="color: #7b0000;">Find Blood Donor</h4>
+                <p class="mb-0 small text-muted">Search donors across 77 districts of Nepal</p>
+            </div>
 
+            <div class="card-body p-4" style="background: #fff;">
                 <form method="POST" action="/search/">
                     {% csrf_token %}
 
-                    <div class="mb-3">
-                        <label class="form-label fw-bold">Blood Group Needed</label>
-                        <select name="blood_group" class="form-select" required>
+                    <input type="hidden" name="latitude" id="latitude">
+                    <input type="hidden" name="longitude" id="longitude">
+
+                    <!-- Blood Group -->
+                    <div class="form-floating mb-4">
+                        <select name="blood_group" class="form-select" id="bloodGroup" required
+                                style="border: 1.5px solid #ddd; border-radius: 10px;
+                                       color: #7b0000; font-weight: 600;">
                             <option value="">Select Blood Group</option>
                             <option value="A+">A+</option>
                             <option value="A-">A-</option>
@@ -27,23 +36,110 @@
                             <option value="AB+">AB+</option>
                             <option value="AB-">AB-</option>
                         </select>
+                        <label for="bloodGroup" class="text-muted small">Blood Group</label>
                     </div>
 
+                    <!-- GPS -->
                     <div class="mb-3">
-                        <label class="form-label fw-bold">Your District</label>
-                        <input type="text" name="district" class="form-control" required>
+                        <button type="button" class="btn w-100 fw-semibold py-2"
+                                onclick="getGPS()" id="gpsBtn"
+                                style="background: #fff3f3; color: #7b0000;
+                                       border: 1.5px solid #ddd; border-radius: 10px;">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18"
+                                 viewBox="0 0 24 24" fill="#7b0000"
+                                 style="margin-right: 6px; vertical-align: middle;">
+                                <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/>
+                            </svg>
+                            Detect My Location (GPS)
+                        </button>
+                        <div id="gpsStatus" class="small text-center mt-1"></div>
+                        <div id="locationBadge" class="alert alert-success py-2 small text-center mt-2 mb-0"
+                             style="border-radius: 10px; display:none; font-size: 12px;">
+                           <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"
+                                fill="none" stroke="white" stroke-width="2.5"
+                                stroke-linecap="round" stroke-linejoin="round"
+                                style="background: #2e7d32; border-radius: 4px; padding: 2px; margin-right: 4px; vertical-align: middle;">
+                                <polyline points="20 6 9 17 4 12"/>
+                            </svg> <span id="locationLabel"></span>
+                        </div>
                     </div>
 
-                    <div class="d-grid mt-4">
-                        <button type="submit" class="btn btn-danger fw-bold">
-                            🔍 Search Donors
+                    <!-- Divider -->
+                    <div class="d-flex align-items-center my-3">
+                        <hr class="flex-grow-1">
+                        <span class="px-2 text-muted small">or select district</span>
+                        <hr class="flex-grow-1">
+                    </div>
+
+                    <!-- District -->
+                    <div class="form-floating mb-4">
+                        <input type="text" name="district" id="districtInput"
+                               class="form-control" list="district-list"
+                               placeholder="District"
+                               autocomplete="off"
+                               style="border: 1.5px solid #ddd; border-radius: 10px;">
+                        <label for="districtInput" class="text-muted small">District</label>
+                        <datalist id="district-list">
+                        {% for d in districts %}
+                            <option value="{{ d|title }}">
+                        {% endfor %}
+                        </datalist>
+                    </div>
+
+                    <!-- Submit -->
+                    <div class="d-grid">
+                        <button type="submit" class="btn fw-bold py-2"
+                                style="background: #7b0000; color: white;
+                                    border-radius: 10px; font-size: 15px;">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16"
+                                fill="white" viewBox="0 0 24 24"
+                                style="margin-right: 6px; vertical-align: middle;">
+                                <path d="M15.5 14h-.79l-.28-.27A6.471 6.471 0 0 0 16 9.5 6.5 6.5 0 1 0 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/>
+                            </svg> Find Donors
                         </button>
                     </div>
                 </form>
-
             </div>
         </div>
     </div>
 </div>
+
+<script>
+function getGPS() {
+    const status = document.getElementById('gpsStatus');
+    const btn = document.getElementById('gpsBtn');
+    status.className = 'small text-center mt-1 text-muted';
+    status.textContent = '⏳ Getting your location...';
+    btn.disabled = true;
+
+    if (!navigator.geolocation) {
+        status.className = 'small text-center mt-1 text-danger';
+        status.textContent = '❌ GPS not supported. Please select your district.';
+        btn.disabled = false;
+        return;
+    }
+
+    navigator.geolocation.getCurrentPosition(
+        function(pos) {
+            document.getElementById('latitude').value = pos.coords.latitude;
+            document.getElementById('longitude').value = pos.coords.longitude;
+            document.getElementById('locationBadge').style.display = 'block';
+            document.getElementById('locationLabel').textContent =
+                'GPS: ' + pos.coords.latitude.toFixed(4) + ', ' + pos.coords.longitude.toFixed(4);
+            btn.textContent = '✅ Location Detected';
+            btn.style.background = '#e8f5e9';
+            btn.style.color = '#2e7d32';
+            btn.style.borderColor = '#2e7d32';
+            status.textContent = '';
+        },
+        function(err) {
+            status.className = 'small text-center mt-1 text-danger';
+            status.textContent = '❌ GPS denied. Please select your district.';
+            btn.disabled = false;
+        },
+        { timeout: 10000 }
+    );
+}
+</script>
 
 {% endblock %}
